@@ -21,7 +21,7 @@ public class Reproductor {
 
     void main(String[] args) throws Exception {
         String songPath = "C:\\Users\\Matías Cáceres\\IdeaProjects\\Tarea-2-SableCC\\src\\Cancion\\";
-        String songName = "metallica"; // Aqui debe colocar el nombre de la cancion. No debe colocar extension
+        String songName = "evanescense"; // Aqui debe colocar el nombre de la cancion. No debe colocar extension
 
         Cancion cancion = new Cancion();
 
@@ -41,9 +41,9 @@ public class Reproductor {
         for (Letras l : cancion.getLyrics()) {
 
             if (debug) {
-                System.out.println("[" +l.getTimestamp() +"] " +l.getTexto());
+                System.out.println("[" +l.getTimestamp() +"] " +l.getTexto().trim());
             }
-            new Reminder(l.getTimestamp(), l.getTexto());
+            new Reminder(l.getTimestamp(), l.getTexto().trim());
         }
 
         if (debug) {

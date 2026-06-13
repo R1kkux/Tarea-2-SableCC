@@ -7,8 +7,7 @@ Helpers
 Tokens
     numeros = number+;
 
-    texto = ascii;
-    textolimitado = [[ascii - [48..57]] - ':']+;
+    textolimitado = [[ascii - [48..57]] - [':' + '.']]+;
 
     abrecorchete = '[';
     cierracorchete = ']';
@@ -28,5 +27,11 @@ Productions
     linea = abrecorchete contenido;
 
     contenido =
-        {timestamp} [min]:numeros dospuntos [seg]:numeros punto [mil]:numeros cierracorchete [lyric]:texto?|
-        {metadato} [metadato]:textolimitado dospuntos texto cierracorchete;
+        {timestamp} [min]:numeros dospuntos [seg]:numeros punto [mil]:numeros cierracorchete [lyric]:texto*|
+        {metadato} [metadato]:textolimitado dospuntos texto+ cierracorchete;
+
+    texto =
+        {string} textolimitado |
+        {numero} numeros |
+        {punto} punto |
+        {dospuntos} dospuntos;

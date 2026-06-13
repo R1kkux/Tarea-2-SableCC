@@ -1,11 +1,12 @@
 package Reproductor;
 
 import Lyrics.analysis.DepthFirstAdapter;
-import Lyrics.node.ALinea;
 import Lyrics.node.AMetadatoContenido;
 import Lyrics.node.ATimestampContenido;
+import Lyrics.node.PTexto;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 public class Cancion extends DepthFirstAdapter {    // Esta clase actua como el visitador
     private ArrayList<Letras> lyrics = new ArrayList<>();
@@ -16,21 +17,21 @@ public class Cancion extends DepthFirstAdapter {    // Esta clase actua como el 
 
     @Override
     public void caseAMetadatoContenido(AMetadatoContenido node) {
-        String metadato = String.valueOf(node.getTextolimitado()).trim();
-        String texto = String.valueOf(node.getTexto()).trim();
+        String metadato = String.valueOf(node.getMetadato()).trim();
+        String texto = String.valueOf(node.getTexto());
 
         switch (metadato) {
             case "ti":
-                titulo = texto;
+                titulo = texto.trim();
                 return;
             case "ar":
-                artista = texto;
+                artista = texto.trim();
                 return;
             case "al":
-                album = texto;
+                album = texto.trim();
                 return;
             default:
-                System.out.println("-- El metadato [" + metadato + ":" + texto + "] no es un tipo de metadato reconocido.");
+                System.out.println("-- El metadato [" + metadato.trim() + ":" + texto.trim() + "] no es un tipo de metadato reconocido.");
         }
     }
 
@@ -40,15 +41,15 @@ public class Cancion extends DepthFirstAdapter {    // Esta clase actua como el 
         long min = Long.parseLong(String.valueOf(node.getMin()).trim());
         long seg = Long.parseLong(String.valueOf(node.getSeg()).trim());
 
-        String text = "";
+        StringBuilder text = new  StringBuilder();
 
-        if (node.getLyric() != null) {
-            text = String.valueOf(node.getLyric()).trim();
+        for (PTexto lista : node.getLyric()) {
+            text.append(lista.toString());
         }
 
         Long timestamp = (mil * 10) + (seg * 1000) + (min * 60000);
 
-        lyrics.add(new Letras(timestamp, text));
+        lyrics.add(new Letras(timestamp, text.toString()));
     }
 
     public ArrayList<Letras> getLyrics() {
