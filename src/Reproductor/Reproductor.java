@@ -1,8 +1,10 @@
+// Matías Hernando Cáceres Ceballos
+
 package Reproductor;
 
-import Lyrics.lexer.Lexer;
-import Lyrics.node.Start;
-import Lyrics.parser.Parser;
+import SableCC.lexer.Lexer;
+import SableCC.node.Start;
+import SableCC.parser.Parser;
 import javazoom.jlgui.basicplayer.BasicPlayer;
 
 import java.io.File;
@@ -11,6 +13,8 @@ import java.io.InputStreamReader;
 import java.io.PushbackReader;
 
 public class Reproductor {
+    String songName = "Zombie"; // Aqui debe colocar el nombre de la cancion. No debe colocar extension
+    long offset = 1100; // Hay que cambiar este valor si es que la cancion esta des-sincronizada
 
     private BasicPlayer player;
     private boolean debug = false;
@@ -20,38 +24,36 @@ public class Reproductor {
     }
 
     void main(String[] args) throws Exception {
-        String songPath = "C:\\Users\\Matías Cáceres\\IdeaProjects\\Tarea-2-SableCC\\src\\Cancion\\";
-        String songName = "evanescense"; // Aqui debe colocar el nombre de la cancion. No debe colocar extension
-
         Cancion cancion = new Cancion();
 
-        Parser p = new Parser(new Lexer(new PushbackReader(new InputStreamReader(new FileInputStream(songPath + songName + ".lrc")), 1024)));
+        Parser p = new Parser(new Lexer(new PushbackReader(new InputStreamReader(new FileInputStream("src/Lyrics/" + songName + ".lrc")), 1024)));
         Start st = p.parse();
 
         st.apply(cancion);
 
-        try {
-            AbrirFichero(songPath + songName + ".mp3");
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
+        AbrirFichero("src/Canciones/" + songName + ".mp3");
 
-        Play();
-
-        for (Letras l : cancion.getLyrics()) {
-
-            if (debug) {
-                System.out.println("[" +l.getTimestamp() +"] " +l.getTexto().trim());
+            for (Letras l : cancion.getLyrics()) {
+                if (debug) {
+                    System.out.println("[" + l.getTimestamp() + "] " + l.getTexto().trim());
+                }
+                new Reminder(l.getTimestamp() + offset, l.getTexto().trim());
             }
-            new Reminder(l.getTimestamp(), l.getTexto().trim());
-        }
+
+            Play();
 
         if (debug) {
             System.out.println("== FINALIZO LA CARGA DE LYRICS ==");
         }
+
+        System.out.println("\n-----==== Reproduciendo ====-----\n");
+        cancion.imprimirDatos(debug);
+        if (offset != 0) {System.out.println("\t Offset [Personal] : " + offset);}
+        System.out.println("\n-----=======================-----\n\n\n");
     }
 
         public void Play() throws Exception {
+
         player.play();
     }
 
@@ -71,17 +73,4 @@ public class Reproductor {
         player.stop();
     }
 }
-
-//
-//    public static void main(String args[]){
-//        try {
-//            Reproductor mi_reproductor = new Reproductor();
-//            mi_reproductor.AbrirFichero("C:\\Users\\Matías Cáceres\\IdeaProjects\\Tarea-2-SableCC\\src\\Reproductor.Cancion\\Billie_Jean.mp3");
-//            mi_reproductor.Play();
-//            String st = "Se cumplieron 5 segundos";
-//            mi_reproductor.new Reminder(5000, st);
-//        } catch (Exception ex) {
-//            System.out.println("Error: " + ex.getMessage());
-//        }
-//    }
 
